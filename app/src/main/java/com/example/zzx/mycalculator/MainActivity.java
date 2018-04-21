@@ -3,13 +3,16 @@ package com.example.zzx.mycalculator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
+import android.view.Menu;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
-import android.widget.Switch;
 import android.widget.TextView;
 
+
+import java.util.regex.*;
 import java.util.HashMap;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -17,14 +20,14 @@ public class MainActivity extends AppCompatActivity {
     private HashMap btnId = new HashMap<String, Integer>();
     private TextView textProcess;
     private TextView textResult;
-    private int braClick = 0;
-    private Calculator myCal;
-
+    private int braClick = 0;  //用来记录括号的输入次数
+    private int AcClick = 0;  //用来记录AC的输入次数
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE); //此行代码可以去掉标题栏
         setContentView(R.layout.activity_main);
 
 
@@ -34,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         textResult = (TextView) findViewById(R.id.Result);
         btnListener myBtnListener = new btnListener();
         makeIdMap(btnId);
+        // 批量绑定按钮
         for (int i = 0; i < 20; i++) {
             String btnName = btnId.get(i).toString();
             int btnID = getResources().getIdentifier(btnName, "id", getPackageName());
@@ -41,14 +45,30 @@ public class MainActivity extends AppCompatActivity {
             buttons[i].setOnClickListener(myBtnListener);
         }
 
+        if (savedInstanceState != null) {
+        }
 
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.right_menu, menu);
+        return true;
     }
 
     private void makeIdMap(HashMap btnId) {
         String[] btnName = {
                 "btn0", "btn1", "btn2", "btn3", "btn4",
                 "btn5", "btn6", "btn7", "btn8", "btn9",
-                "AC", "del", "bra", "per", "add",
+                "AC", "del", "braL", "braR", "add",
                 "sub", "mul", "div", "dot", "equal"
         };
         for (int i = 0; i < btnName.length; i++) {
@@ -102,11 +122,11 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.del:
                     opInput("del");
                     break;
-                case R.id.bra:
-                    opInput("bra");
+                case R.id.braL:
+                    opInput("braL");
                     break;
-                case R.id.per:
-                    opInput("per");
+                case R.id.braR:
+                    opInput("braR");
                     break;
                 case R.id.add:
                     opInput("add");
@@ -142,54 +162,84 @@ public class MainActivity extends AppCompatActivity {
 
     private void opInput(String opBtn) {
         String btnText = opBtn;
+        String prev = textProcess.getText().toString();
+        String prevOne;
+        if (prev.length() == 0) {
+            prev = " ";
+        }
+        prevOne = prev.substring(prev.length() - 1);  //代表输入的前一个字符
+        System.out.println("前一个字符为：" + prevOne);
         switch (btnText) {
             case "AC":
+                AcClick++;
                 textProcess.setText("");
                 braClick = 0;
                 break;
             case "del":
-                String temp = textProcess.getText().toString();
-                if (temp.length() > 0) {
-                    if (temp.charAt(temp.length() - 1) == '(' || temp.charAt(temp.length() - 1) == ')') {
-                        braClick--;
-                    }
-                    textProcess.setText(temp.subSequence(0, temp.length() - 1));
+                if (prevOne.charAt(0) == '(') {
+                    braClick--;
+                } else if (prevOne.charAt(0) == ')') {
+                    braClick++;
+                }
+                textProcess.setText(prev.subSequence(0, prev.length() - 1));
+                calculate();
+                break;
+            case "braL":
+                //如果当前输入框的最后一个字符不是数字则可以输入左括号
+                if (Pattern.matches("[^\\d\\)\\.]", prev.substring(prev.length() - 1))) {
+                    textProcess.append("(");
+                    braClick++;
                 }
                 calculate();
                 break;
-            case "bra":
-                if (braClick % 2 == 0) {
-                    textProcess.append("(");
-                    braClick++;
-                } else {
-                    textProcess.append(")");
-                    calculate();
-                    braClick++;
+            case "braR":
+                //如果前一个字符不是操作符号才可以输入右括号
+                if (Pattern.matches("[^\\+\\-\\×\\÷\\(\\.]", prevOne)) {
+                    if (braClick > 0) {
+                        textProcess.append(")");
+                        braClick--;  //没输入一个右括号抵消一个左括
+                    }
                 }
-                break;
-            case "per":
-                textProcess.append("%");
+                calculate();
                 break;
             case "add":
-                textProcess.append("+");
+                // 只有前一个字符不为操作符还有空格时才能输入+
+                if (Pattern.matches("[^\\+\\-\\×\\÷\\(\\s\\.]", prevOne)) {
+                    textProcess.append("+");
+                }
                 break;
             case "sub":
-                textProcess.append("-");
+                // 前一个不为减号的时候才可以输入
+                if (Pattern.matches("[^\\-\\.]", prevOne)) {
+                    textProcess.append("-");
+                }
                 break;
             case "mul":
-                textProcess.append("×");
+                if (Pattern.matches("[^\\+\\-\\×\\÷\\(\\s\\.]", prevOne)) {
+                    textProcess.append("×");
+                }
                 break;
             case "div":
-                textProcess.append("÷");
+                if (Pattern.matches("[^\\+\\-\\×\\÷\\(\\s\\.]", prevOne)) {
+                    textProcess.append("÷");
+                }
                 break;
             case "dot":
-                textProcess.append(".");
+                //输入小数点的条件
+                //1.前面不能为空或是操作符
+                //2.不能在一个小数后面追加小数点
+                if (Pattern.matches("[^\\+\\-\\×\\÷\\(\\)\\s\\.]", prevOne)) {
+                    if (!Pattern.matches("(.*[0-9]+\\.[0-9]+)$", prev)) {
+                        textProcess.append(".");
+                    }
+                }
                 break;
             case "equal":
                 calculate();
 
                 break;
         }
+        System.out.println(braClick);
 
     }
 
@@ -198,7 +248,15 @@ public class MainActivity extends AppCompatActivity {
         mathLine = mathLine.replace("×", "*");
         mathLine = mathLine.replace("÷", "/");
         double result = Calculator.conversion(mathLine);
-        textResult.setText(Double.toString(result));
+        String temp = Double.toString(result);
+        if (braClick == 0) {  //括号抵消状态时
+            if (Pattern.matches("[^0-9\\.]", temp)) {
+                System.out.println("输入异常！");
+                textResult.setText("简单点！输入的方式简单点！"); //只有当计算出结果时才显示
+            } else {
+                textResult.setText(temp);
+            }
+        }
 
     }
 

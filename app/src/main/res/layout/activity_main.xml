@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
     <LinearLayout
         android:id="@+id/MainLayout"
         android:layout_width="0dp"
@@ -146,12 +147,12 @@
                 android:orientation="vertical">
 
                 <Button
-                    android:id="@+id/bra"
+                    android:id="@+id/braL"
                     style="@style/numBtn"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:text="( )" />
+                    android:text="(" />
 
                 <Button
                     android:id="@+id/btn3"
@@ -193,12 +194,12 @@
                 android:orientation="vertical">
 
                 <Button
-                    android:id="@+id/per"
+                    android:id="@+id/braR"
                     style="@style/numBtn"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:text="%" />
+                    android:text=")" />
 
                 <Button
                     android:id="@+id/add"

@@ -4,8 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".FullscreenActivity">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:id="@+id/MainLayout"
@@ -40,6 +39,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="6.5"
+            android:baselineAligned="false"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -57,28 +57,29 @@
                     android:text="AC" />
 
                 <Button
-                    android:id="@+id/del"
+                    android:id="@+id/add"
                     style="@style/numBtn"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:text="DEL" />
+                    android:text="+" />
 
                 <Button
-                    android:id="@+id/bra"
+                    android:id="@+id/mul"
                     style="@style/numBtn"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:text="( )" />
+                    android:text="×" />
 
                 <Button
-                    android:id="@+id/per"
+                    android:id="@+id/braL"
                     style="@style/numBtn"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:text="%" />
+                    android:text="(" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -205,12 +206,12 @@
                 android:orientation="vertical">
 
                 <Button
-                    android:id="@+id/add"
+                    android:id="@+id/del"
                     style="@style/numBtn"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:text="+" />
+                    android:text="DEL" />
 
                 <Button
                     android:id="@+id/sub"
@@ -221,20 +222,20 @@
                     android:text="-" />
 
                 <Button
-                    android:id="@+id/mul"
-                    style="@style/numBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="×" />
-
-                <Button
                     android:id="@+id/div"
                     style="@style/numBtn"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:text="÷" />
+
+                <Button
+                    android:id="@+id/braR"
+                    style="@style/numBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text=")" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
