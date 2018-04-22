@@ -155,8 +155,16 @@ public class MainActivity extends AppCompatActivity {
 
     //数字输入时的函数调用
     private void numInput(String num) {
-        String NUM = num;
-        textProcess.append(num);
+        String prev = textProcess.getText().toString();
+        String prevOne;
+        if (prev.length() == 0) {
+            prev = " ";
+        }
+        prevOne = prev.substring(prev.length() - 1);  //代表输入的前一个字符
+        // 只有当前一个字符不为右括号时才可以输入数字
+        if (Pattern.matches("[^\\)]$", prevOne)) {
+            textProcess.append(num);
+        }
         calculate();
     }
 
@@ -243,6 +251,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    // 实时计算功能的调用
     private void calculate() {
         String mathLine = textProcess.getText().toString();
         mathLine = mathLine.replace("×", "*");
@@ -250,8 +259,8 @@ public class MainActivity extends AppCompatActivity {
         double result = Calculator.conversion(mathLine);
         String temp = Double.toString(result);
         if (braClick == 0) {  //括号抵消状态时
-            if (Pattern.matches("[^0-9\\.]", temp)) {
-                System.out.println("输入异常！");
+            if (!Pattern.matches("[E\\-\\d\\.]+", temp)) {  //如果计算结果不为数字的话显示下面信息
+                System.out.println("结果异常！"+temp);
                 textResult.setText("简单点！输入的方式简单点！"); //只有当计算出结果时才显示
             } else {
                 textResult.setText(temp);
