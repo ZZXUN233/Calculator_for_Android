@@ -33,13 +33,13 @@ public class calculator {
     public static String do_calculate(String mathLine) {
         String RESULT = "";
         System.out.println("计算式的长度为" + mathLine.length());
-        try{
+        try {
             makeArray(mathLine);
             for (String input : tempStack) {
                 makeStak(input);
             }
             RESULT = calculate();
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         // 计算完成一次清空所有堆栈
@@ -108,7 +108,8 @@ public class calculator {
                 expStack.push(opStack.pop());
             }
             opStack.pop();
-        } else if (Pattern.matches("[\\%\\#\\-\\*\\+\\/\\^]+", pushTem)) {
+        } else {
+//        else if (Pattern.matches("[\\%\\#\\-\\*\\+\\/\\^]+", pushTem)) {
             System.out.println(pushTem + "符号入栈！");
             for (String op : opStack) {
                 System.out.println(op + "--------在符号缓存栈中");
