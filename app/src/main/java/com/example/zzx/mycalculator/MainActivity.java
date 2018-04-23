@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                     textProcess.append("(");
                     braClick++;
                 }
-                calculate();
+//                calculate();
                 break;
             case "braR":
                 //如果前一个字符不是操作符号才可以输入右括号
@@ -256,18 +256,16 @@ public class MainActivity extends AppCompatActivity {
         String mathLine = textProcess.getText().toString();
         mathLine = mathLine.replace("×", "*");
         mathLine = mathLine.replace("÷", "/");
-        double result = Calculator.conversion(mathLine);
-        String temp = Double.toString(result);
-        if (braClick == 0) {  //括号抵消状态时
-            if (!Pattern.matches("[E\\-\\d\\.]+", temp)) {  //如果计算结果不为数字的话显示下面信息
-                System.out.println("结果异常！"+temp);
-                textResult.setText("简单点！输入的方式简单点！"); //只有当计算出结果时才显示
-            } else {
-                textResult.setText(temp);
-            }
+        String RESULT = "";
+        try{
+            RESULT = calculator.do_calculate(mathLine);
+        }
+        catch (Exception e){
+            RESULT = "error!";
+            System.out.println(e.getMessage());
+        }finally {
+            textResult.setText(RESULT);
         }
 
     }
-
-
 }
