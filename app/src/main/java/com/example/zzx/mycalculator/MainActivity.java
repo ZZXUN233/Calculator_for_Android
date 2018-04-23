@@ -1,5 +1,8 @@
 package com.example.zzx.mycalculator;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -16,13 +19,30 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button[] buttons = new Button[20];
+    private String[] btnName = {
+            "btn0", "btn1", "btn2", "btn3", "btn4",
+            "btn5", "btn6", "btn7", "btn8", "btn9",
+            "AC", "del", "braL", "braR", "add",
+            "sub", "mul", "div", "dot", "equal",
+            "pow", "per", "sqrt", "fac",
+    };
+    private int btnNUM = btnName.length;
+    private Button[] buttons = new Button[btnNUM];
     private HashMap btnId = new HashMap<String, Integer>();
     private TextView textProcess;
     private TextView textResult;
     private int braClick = 0;  //用来记录括号的输入次数
-    private int AcClick = 0;  //用来记录AC的输入次数
+    private Configuration myConf;
+    //    private String inputText = "";
+//    private String resultText = "";
+//    private Intent intent = null;
+    private Context context = this;
 
+    private void makeIdMap(HashMap btnId) {
+        for (int i = 0; i < btnNUM; i++) {
+            btnId.put(i, btnName[i]);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +53,25 @@ public class MainActivity extends AppCompatActivity {
 
         //--------------------------------------------------
         textProcess = (TextView) findViewById(R.id.Process);
-        textProcess.setMovementMethod(new ScrollingMovementMethod());
+        textProcess.setMovementMethod(new ScrollingMovementMethod());  //设置输入过程框为可滑动
         textResult = (TextView) findViewById(R.id.Result);
+
+//        inputText = textProcess.getText().toString();
+//        resultText = textResult.getText().toString();
+
         btnListener myBtnListener = new btnListener();
+        //-------------------------判断当前屏幕方向，并加载不同的按钮个数
+        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            //横屏时按钮个数为原来的个数
+            btnNUM = 24;
+            System.out.println("现在是横屏时的按钮个数" + btnNUM);
+        } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            btnNUM = 20;
+            System.out.println("现在是竖屏时的按钮个数" + btnNUM);
+        }
         makeIdMap(btnId);
         // 批量绑定按钮
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < btnNUM; i++) {
             String btnName = btnId.get(i).toString();
             int btnID = getResources().getIdentifier(btnName, "id", getPackageName());
             buttons[i] = ((Button) findViewById(btnID));
@@ -47,13 +80,78 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState != null) {
         }
+//        intent = getIntent();
+//        String input = intent.getStringExtra("process");
+//        String result = intent.getStringExtra("result");
+    }
 
-
+    // 当前activity将被销毁时调用
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+//        Intent intent = new Intent(context, MainActivity.class);
+//        intent.putExtra("process", textProcess.getText().toString());
+//        intent.putExtra("result", textResult.getText().toString());
+//        setResult(1, intent);
+        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            //横屏时按钮个数为原来的个数
+            btnNUM = 24;
+            System.out.println("现在是横屏时的按钮个数" + btnNUM);
+        } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            btnNUM = 20;
+            System.out.println("现在是竖屏时的按钮个数" + btnNUM);
+        }
+        outState.putString("process", textProcess.getText().toString());
+        outState.putString("result", textResult.getText().toString());
+        System.out.println("屏幕发生旋转！");
+        super.onSaveInstanceState(outState);
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+//       textProcess.setText(intent.get);
+        String inputTem = savedInstanceState.getString("process");
+        String resultTem = savedInstanceState.getString("result");
+        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            //横屏时按钮个数为原来的个数
+            btnNUM = 24;
+            System.out.println("现在是横屏时的按钮个数" + btnNUM);
+        } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            btnNUM = 20;
+            System.out.println("现在是竖屏时的按钮个数" + btnNUM);
+        }
+        textProcess.setText(inputTem);
+        textResult.setText(resultTem);
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent date) {
+        super.onActivityResult(requestCode, resultCode, date);
+//        if (resultCode == 1) {
+//            String input = date.getStringExtra("process");
+//            String result = date.getStringExtra("result");
+//            textProcess.setText(input);
+//            textResult.setText(result);
+//        }
+    }
+
+    //    @Override
+//    public void onSaveInstanceState(Bundle savedInstanceState) {
+//        super.onSaveInstanceState(savedInstanceState);
+//
+//    }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        System.out.println("屏幕旋转！");
+        switch (newConfig.orientation) {
+            case Configuration.ORIENTATION_PORTRAIT:
+                setContentView(R.layout.activity_main);
+                break;
+            case Configuration.ORIENTATION_LANDSCAPE:
+                setContentView(R.layout.activity_main);
+                break;
+        }
 
     }
 
@@ -62,21 +160,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.right_menu, menu);
         return true;
-    }
-
-    private void makeIdMap(HashMap btnId) {
-        String[] btnName = {
-                "btn0", "btn1", "btn2", "btn3", "btn4",
-                "btn5", "btn6", "btn7", "btn8", "btn9",
-                "AC", "del", "braL", "braR", "add",
-                "sub", "mul", "div", "dot", "equal"
-        };
-        for (int i = 0; i < btnName.length; i++) {
-            btnId.put(i, btnName[i]);
-
-        }
-
-
     }
 
 
@@ -147,6 +230,19 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.equal:
                     opInput("equal");
                     break;
+//---------------------------------------------------
+                case R.id.pow:
+                    opInput("pow");
+                    break;
+                case R.id.per:
+                    opInput("per");
+                    break;
+                case R.id.sqrt:
+                    opInput("sqrt");
+                    break;
+                case R.id.fac:
+                    opInput("fac");
+                    break;
             }
 
         }
@@ -179,7 +275,6 @@ public class MainActivity extends AppCompatActivity {
         System.out.println("前一个字符为：" + prevOne);
         switch (btnText) {
             case "AC":
-                AcClick++;
                 textProcess.setText("");
                 braClick = 0;
                 break;
@@ -246,6 +341,32 @@ public class MainActivity extends AppCompatActivity {
                 calculate();
 
                 break;
+
+            //-----------------------------------高级计算功能
+            case "pow":
+                if (Pattern.matches("[0-9\\)]+", prevOne)) {  //以数字结尾时可以输入
+                    textProcess.append("^");
+                }
+                calculate();
+                break;
+            case "per":
+                if (Pattern.matches("[0-9\\)]+", prevOne)) {
+                    textProcess.append("%");
+
+                }
+                calculate();
+                break;
+            case "sqrt":
+                if (Pattern.matches("[^\\d\\(\\)\\%]", prevOne)) {
+                    textProcess.append("√");
+                }
+                break;
+            case "fac":
+                if (Pattern.matches("[0-9\\)]+", prevOne)) {
+                    textProcess.append("!");
+                }
+                calculate();
+                break;
         }
         System.out.println(braClick);
 
@@ -257,15 +378,15 @@ public class MainActivity extends AppCompatActivity {
         mathLine = mathLine.replace("×", "*");
         mathLine = mathLine.replace("÷", "/");
         String RESULT = "";
-        try{
+        try {
             RESULT = calculator.do_calculate(mathLine);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             RESULT = "error!";
             System.out.println(e.getMessage());
-        }finally {
+        } finally {
             textResult.setText(RESULT);
         }
 
     }
 }
+
