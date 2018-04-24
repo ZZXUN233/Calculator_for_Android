@@ -1,4 +1,5 @@
 package com.example.zzx.mycalculator;
+
 // 在此重新写计算的实现类
 //添加一个静态方法
 
@@ -17,7 +18,7 @@ public class calculator {
     // 记录操作符号的优先级
 
     @SuppressWarnings("serial")
-    private static HashMap<String, Integer> op_relus = new HashMap<String, Integer>() {  //操作符号扩展及优先级初始化
+    private static HashMap<String, Integer> op_rules = new HashMap<String, Integer>() {  //操作符号扩展及优先级初始化
         {
 
             put("+", 1);
@@ -78,10 +79,9 @@ public class calculator {
         mathLine = mathLine.replace(":-", ":#");
         mathLine = mathLine.replace(":", "");
         System.out.println(mathLine);
-        Stack<String> target = new Stack<String>();
         String numTemp = "";
         for (int i = 0; i < mathLine.length(); i++) {
-            if (Pattern.matches("[\\d\\.]+", mathLine.substring(i, i + 1))) {
+            if (Pattern.matches("[\\d\\.E]+", mathLine.substring(i, i + 1))) {
                 numTemp += mathLine.substring(i, i + 1);
             } else {
                 // 当扫描到不是数字时，就将数字缓存入栈，并清空缓存
@@ -100,7 +100,9 @@ public class calculator {
             tempStack.push(numTemp);
             numTemp = "";
         }
-        target = tempStack;
+        for (String item : tempStack) {
+            System.out.println(item);
+        }
     }
 
     // 建立全局堆栈
@@ -109,7 +111,7 @@ public class calculator {
 
         // 这里响应多种输入的入栈
         // 数字
-        if (Pattern.matches("[\\d\\.]+", pushTem)) {
+        if (Pattern.matches("[\\d\\.E]+", pushTem)) {
             System.out.println("数字入栈！" + pushTem);
             expStack.push(pushTem);
         } else if (Pattern.matches("[\\(]+", pushTem)) { // 左括号
@@ -128,7 +130,7 @@ public class calculator {
                 System.out.println(op + "--------在符号缓存栈中");
             }
             if (!opStack.isEmpty()) {
-                while (op_relus.get(pushTem) <= op_relus.get(opStack.peek())) { // 当前操作符的优先级小于或等于栈顶操作符号的优先级时
+                while (op_rules.get(pushTem) <= op_rules.get(opStack.peek())) { // 当前操作符的优先级小于或等于栈顶操作符号的优先级时
                     if (Pattern.matches("[\\(]+", opStack.peek())) { // 栈顶为左括号就不管
                         break;
                     }
@@ -164,7 +166,7 @@ public class calculator {
         }
         // 做运算
         for (String tem : expStack) {
-            if (Pattern.matches("[\\d\\.]+", tem)) { // 数字入栈
+            if (Pattern.matches("[\\d\\.E]+", tem)) { // 数字入栈
                 numStack.push(Double.parseDouble(tem));
             } else if (Pattern.matches("[\\#]+", tem)) { // 负数的回归
                 Double numTem = numStack.pop();

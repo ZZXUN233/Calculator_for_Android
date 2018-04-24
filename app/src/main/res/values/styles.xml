@@ -16,8 +16,5 @@
         <item name="android:layout_marginBottom">3dp</item>
         <item name="android:layout_marginEnd">2dp</item>
     </style>
-    <style name="TestResult" parent="Base.TextAppearance.AppCompat.Display1">
-
-    </style>
 
 </resources>

@@ -1,12 +1,11 @@
 package com.example.zzx.mycalculator;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
@@ -17,7 +16,8 @@ import android.widget.TextView;
 import java.util.regex.*;
 import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity {
+//public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     //所有的按钮名字
     private String[] btnName = {                                //按钮的名称
@@ -38,7 +38,6 @@ public class MainActivity extends AppCompatActivity {
 
     // 初始化按钮
     public void initBtn() {
-
         //-------------------------判断当前屏幕方向，并加载不同的按钮个数
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             //横屏时按钮个数为原来的个数
@@ -64,6 +63,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //设置输入框的自动滚动
+    private void scroll() {
+        int offset = textProcess.getLineCount() * textProcess.getLineHeight();
+        if (offset > textProcess.getHeight()) {
+            textProcess.scrollTo(0, offset - textProcess.getHeight());
+//        }else{
+//            textProcess.scrollTo(0,offset);
+        }
+        int offset2 = textResult.getLineCount() * textResult.getLineHeight();
+//        if(offset2>textResult.getHeight()){
+//            textResult.scrollTo(0,offset2-textResult.getHeight());
+//        }
+//        textResult.scrollTo(0,offset2);
+    }
+
     //activity 创建
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         textProcess = (TextView) findViewById(R.id.Process);
         textProcess.setMovementMethod(new ScrollingMovementMethod());  //设置输入过程框为可滑动
         textResult = (TextView) findViewById(R.id.Result);
+        textResult.setMovementMethod(new ScrollingMovementMethod());  //设置输入过程框为可滑动
 
     }
 
@@ -118,13 +133,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //重写创建菜单
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.right_menu, menu);
-        return true;
-    }
 
+    /**
+     * @Override //    public boolean onCreateOptionsMenu(Menu menu) {
+     * //        super.onCreateOptionsMenu(menu);
+     * //        getMenuInflater().inflate(R.menu.right_menu, menu);
+     * //        return true;
+     * //    }
+     */
     // 设置按钮的绑定事件类
     private class btnListener implements View.OnClickListener {
         @Override
@@ -299,9 +315,9 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case "equal":
-                calculate();
                 //按下等号后存储计算记录
                 this.date_save();
+                textProcess.setText(textResult.getText());
                 break;
 
             //-----------------------------------高级计算功能
@@ -347,11 +363,13 @@ public class MainActivity extends AppCompatActivity {
         } finally {
             textResult.setText(RESULT);
         }
+        //自动滑动
+        this.scroll();
 
     }
 
     //存储计算记录
-    private void date_save(){
+    private void date_save() {
 
     }
 

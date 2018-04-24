@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
     tools:context=".MainActivity">
 
 
@@ -12,7 +13,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:weightSum="10"
+        android:weightSum="11"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -20,10 +21,40 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.8"
+            android:orientation="horizontal">
+
+            <ScrollView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" />
+            </ScrollView>
+
+            <Button
+                android:id="@+id/button"
+                style="@style/numBtn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="历史记录"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/Process"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:scrollbars="vertical"
+            android:fadeScrollbars="false"
             android:layout_weight="2"
             android:textAlignment="viewEnd"
             android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
@@ -31,8 +62,10 @@
         <TextView
             android:id="@+id/Result"
             android:layout_width="match_parent"
+            android:scrollbars="vertical"
+            android:fadeScrollbars="false"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="1.2"
             android:freezesText="false"
             android:textAlignment="viewEnd"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
