@@ -8,15 +8,16 @@ import java.util.HashMap;
 
 public class calculator {
 	// 两个全局堆栈
-	public static Stack<String> tempStack = new Stack<String>();
-	public static Stack<String> opStack = new Stack<String>();
-	public static Stack<String> expStack = new Stack<String>();
-	public static Stack<Double> numStack = new Stack<Double>();
-	public static Pattern pattern = Pattern.compile("[\\+\\-\\*\\/\\%\\#\\!\\√]+"); // 定义匹配所有运算符号的正则表达式
+	public static Stack<String> tempStack = new Stack<String>();  		//记录扫描后的缓存
+	public static Stack<String> opStack = new Stack<String>();			//缓存符号堆栈
+	public static Stack<String> expStack = new Stack<String>();			//后缀表达式堆栈
+	public static Stack<Double> numStack = new Stack<Double>();			//计算结果堆栈
+//	public static Pattern pattern = Pattern.compile("[\\+\\-\\*\\/\\%\\#\\!\\√]+"); // 定义匹配所有运算符号的正则表达式
 	public static String RESULT; // 记录全局的结果
 	// 记录操作符号的优先级
+
 	@SuppressWarnings("serial")
-	public static HashMap<String, Integer> op_relus = new HashMap<String, Integer>() {
+	public static HashMap<String, Integer> op_relus = new HashMap<String, Integer>() {  //操作符号扩展及优先级初始化
 		{
 
 			put("+", 1);
@@ -33,6 +34,13 @@ public class calculator {
 		}
 	};
 
+
+	//计算功能入口
+	/*
+	* 输入： String的数学式子  如：1+2+3*(2-1)/3!
+	* 功能： 计算数学式子的结果
+	* 输出： String类型的返回计算结果
+	 */
 	public static String do_calculate(String mathLine) {
 		String RESULT = "";
 		System.out.println("计算式的长度为" + mathLine.length());
@@ -61,7 +69,8 @@ public class calculator {
 
 	// 将字符串按照特定的规则切开成数组
 	public static Stack<String> makeArray(String mathLine) {
-		mathLine = ":" + mathLine; // 添加一个起始位
+		//做一系列的初期处理
+		mathLine = ":" + mathLine; 				// 添加一个起始位
 		mathLine = mathLine.replace("×", "*");
 		mathLine = mathLine.replace("÷", "/");
 		mathLine = mathLine.replace("/-", "/#");
@@ -217,6 +226,7 @@ public class calculator {
 		return RESULT;
 	}
 
+	//阶乘的实现
 	private static double fac(double num) {
 		if (num == 1 || num == 0) {
 			return 1;

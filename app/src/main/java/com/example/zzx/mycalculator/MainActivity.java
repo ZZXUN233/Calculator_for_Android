@@ -19,47 +19,26 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-    private String[] btnName = {
+    //所有的按钮名字
+    private String[] btnName = {                                //按钮的名称
             "btn0", "btn1", "btn2", "btn3", "btn4",
             "btn5", "btn6", "btn7", "btn8", "btn9",
             "AC", "del", "braL", "braR", "add",
             "sub", "mul", "div", "dot", "equal",
             "pow", "per", "sqrt", "fac",
     };
-    private int btnNUM = btnName.length;
-    private Button[] buttons = new Button[btnNUM];
-    private HashMap btnId = new HashMap<String, Integer>();
-    private TextView textProcess;
-    private TextView textResult;
-    private int braClick = 0;  //用来记录括号的输入次数
-    private Configuration myConf;
-    //    private String inputText = "";
-//    private String resultText = "";
-//    private Intent intent = null;
-    private Context context = this;
-
-    private void makeIdMap(HashMap btnId) {
-        for (int i = 0; i < btnNUM; i++) {
-            btnId.put(i, btnName[i]);
-        }
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE); //此行代码可以去掉标题栏
-        setContentView(R.layout.activity_main);
+    private int btnNUM = btnName.length;                        //按钮个数
+    private Button[] buttons = new Button[btnNUM];              //动态按钮数组
+    private HashMap btnId = new HashMap<String, Integer>();     //给按钮先编号，方便批量处理
+    private TextView textProcess;                               //计算过程
+    private TextView textResult;                                //结果textview
+    private int braClick = 0;                                   //用来记录括号的输入次数
+    private Configuration myConf;                               //设置获取，用于判断屏幕方向
 
 
-        //--------------------------------------------------
-        textProcess = (TextView) findViewById(R.id.Process);
-        textProcess.setMovementMethod(new ScrollingMovementMethod());  //设置输入过程框为可滑动
-        textResult = (TextView) findViewById(R.id.Result);
+    // 初始化按钮
+    public void initBtn() {
 
-//        inputText = textProcess.getText().toString();
-//        resultText = textResult.getText().toString();
-
-        btnListener myBtnListener = new btnListener();
         //-------------------------判断当前屏幕方向，并加载不同的按钮个数
         if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             //横屏时按钮个数为原来的个数
@@ -69,7 +48,12 @@ public class MainActivity extends AppCompatActivity {
             btnNUM = 20;
             System.out.println("现在是竖屏时的按钮个数" + btnNUM);
         }
-        makeIdMap(btnId);
+        // 初始化按钮个数
+        for (int i = 0; i < btnNUM; i++) {
+            btnId.put(i, btnName[i]);
+        }
+        //按钮个数确定或绑定id和事件
+        btnListener myBtnListener = new btnListener();
         // 批量绑定按钮
         for (int i = 0; i < btnNUM; i++) {
             String btnName = btnId.get(i).toString();
@@ -78,47 +62,41 @@ public class MainActivity extends AppCompatActivity {
             buttons[i].setOnClickListener(myBtnListener);
         }
 
-        if (savedInstanceState != null) {
-        }
-//        intent = getIntent();
-//        String input = intent.getStringExtra("process");
-//        String result = intent.getStringExtra("result");
+    }
+
+    //activity 创建
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE); //此行代码可以去掉标题栏
+        setContentView(R.layout.activity_main);
+        this.initBtn();//按钮初始化
+
+        //--------------------------------------------------
+        //初始化textview控件,在创建activity时初始化的空间全局使用
+        textProcess = (TextView) findViewById(R.id.Process);
+        textProcess.setMovementMethod(new ScrollingMovementMethod());  //设置输入过程框为可滑动
+        textResult = (TextView) findViewById(R.id.Result);
+
     }
 
     // 当前activity将被销毁时调用
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-//        Intent intent = new Intent(context, MainActivity.class);
-//        intent.putExtra("process", textProcess.getText().toString());
-//        intent.putExtra("result", textResult.getText().toString());
-//        setResult(1, intent);
-        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            //横屏时按钮个数为原来的个数
-            btnNUM = 24;
-            System.out.println("现在是横屏时的按钮个数" + btnNUM);
-        } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            btnNUM = 20;
-            System.out.println("现在是竖屏时的按钮个数" + btnNUM);
-        }
+
         outState.putString("process", textProcess.getText().toString());
         outState.putString("result", textResult.getText().toString());
         System.out.println("屏幕发生旋转！");
         super.onSaveInstanceState(outState);
     }
 
+    //重建activity
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-//       textProcess.setText(intent.get);
         String inputTem = savedInstanceState.getString("process");
         String resultTem = savedInstanceState.getString("result");
-        if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            //横屏时按钮个数为原来的个数
-            btnNUM = 24;
-            System.out.println("现在是横屏时的按钮个数" + btnNUM);
-        } else if (this.getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            btnNUM = 20;
-            System.out.println("现在是竖屏时的按钮个数" + btnNUM);
-        }
+        //重新加载activity时再次初始化按钮布局和事件
+//        this.initBtn();
         textProcess.setText(inputTem);
         textResult.setText(resultTem);
         super.onRestoreInstanceState(savedInstanceState);
@@ -127,34 +105,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent date) {
         super.onActivityResult(requestCode, resultCode, date);
-//        if (resultCode == 1) {
-//            String input = date.getStringExtra("process");
-//            String result = date.getStringExtra("result");
-//            textProcess.setText(input);
-//            textResult.setText(result);
-//        }
+
     }
 
-    //    @Override
-//    public void onSaveInstanceState(Bundle savedInstanceState) {
-//        super.onSaveInstanceState(savedInstanceState);
-//
-//    }
+    //屏幕旋转
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         System.out.println("屏幕旋转！");
-        switch (newConfig.orientation) {
-            case Configuration.ORIENTATION_PORTRAIT:
-                setContentView(R.layout.activity_main);
-                break;
-            case Configuration.ORIENTATION_LANDSCAPE:
-                setContentView(R.layout.activity_main);
-                break;
-        }
+        this.initBtn();                             //屏幕旋转后初始化一次按钮
 
     }
 
+    //重写创建菜单
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
@@ -264,6 +227,7 @@ public class MainActivity extends AppCompatActivity {
         calculate();
     }
 
+    //输入符号时的调用
     private void opInput(String opBtn) {
         String btnText = opBtn;
         String prev = textProcess.getText().toString();
@@ -357,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
                 calculate();
                 break;
             case "sqrt":
-                if (Pattern.matches("[^\\d\\(\\)\\%]", prevOne)) {
+                if (Pattern.matches("[^\\d\\(\\)\\%\\√]", prevOne)) {
                     textProcess.append("√");
                 }
                 break;
