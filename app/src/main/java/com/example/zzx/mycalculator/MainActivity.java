@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textProcess;                               //计算过程
     private TextView textResult;                                //结果textview
     private int braClick = 0;                                   //用来记录括号的输入次数
-    private Configuration myConf;                               //设置获取，用于判断屏幕方向
+//    private Configuration myConf;                               //设置获取，用于判断屏幕方向
 
 
     // 初始化按钮
@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE); //此行代码可以去掉标题栏
         setContentView(R.layout.activity_main);
         this.initBtn();//按钮初始化
-
         //--------------------------------------------------
         //初始化textview控件,在创建activity时初始化的空间全局使用
         textProcess = (TextView) findViewById(R.id.Process);
@@ -102,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent date) {
         super.onActivityResult(requestCode, resultCode, date);
@@ -124,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.right_menu, menu);
         return true;
     }
-
 
     // 设置按钮的绑定事件类
     private class btnListener implements View.OnClickListener {
@@ -211,7 +210,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     //数字输入时的函数调用
     private void numInput(String num) {
         String prev = textProcess.getText().toString();
@@ -221,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
         }
         prevOne = prev.substring(prev.length() - 1);  //代表输入的前一个字符
         // 只有当前一个字符不为右括号时才可以输入数字
-        if (Pattern.matches("[^\\)]$", prevOne)) {
+        if (Pattern.matches("[^)]$", prevOne)) {
             textProcess.append(num);
         }
         calculate();
@@ -229,7 +227,6 @@ public class MainActivity extends AppCompatActivity {
 
     //输入符号时的调用
     private void opInput(String opBtn) {
-        String btnText = opBtn;
         String prev = textProcess.getText().toString();
         String prevOne;
         if (prev.length() == 0) {
@@ -237,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
         }
         prevOne = prev.substring(prev.length() - 1);  //代表输入的前一个字符
         System.out.println("前一个字符为：" + prevOne);
-        switch (btnText) {
+        switch (opBtn) {
             case "AC":
                 textProcess.setText("");
                 braClick = 0;
@@ -303,7 +300,8 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case "equal":
                 calculate();
-
+                //按下等号后存储计算记录
+                this.date_save();
                 break;
 
             //-----------------------------------高级计算功能
@@ -316,7 +314,6 @@ public class MainActivity extends AppCompatActivity {
             case "per":
                 if (Pattern.matches("[0-9\\)]+", prevOne)) {
                     textProcess.append("%");
-
                 }
                 calculate();
                 break;
@@ -352,5 +349,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
+    //存储计算记录
+    private void date_save(){
+
+    }
+
 }
 
