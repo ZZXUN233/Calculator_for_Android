@@ -17,33 +17,11 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <Spinner
+            android:id="@+id/Logs"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <ScrollView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical" />
-            </ScrollView>
-
-            <Button
-                android:id="@+id/button"
-                style="@style/numBtn"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="历史记录"
-                android:textSize="8sp" />
-
-        </LinearLayout>
+            android:layout_weight="1.5" />
 
         <TextView
             android:id="@+id/Process"
@@ -70,7 +48,7 @@
             android:id="@+id/InputMain"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="6.5"
+            android:layout_weight="6"
             android:baselineAligned="false"
             android:orientation="horizontal">
 

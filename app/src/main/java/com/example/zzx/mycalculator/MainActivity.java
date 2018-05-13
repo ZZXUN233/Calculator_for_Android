@@ -1,18 +1,26 @@
 package com.example.zzx.mycalculator;
 
 import android.app.Activity;
+import android.app.ExpandableListActivity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.*;
 import java.util.HashMap;
 
@@ -25,15 +33,49 @@ public class MainActivity extends Activity {
             "btn5", "btn6", "btn7", "btn8", "btn9",
             "AC", "del", "braL", "braR", "add",
             "sub", "mul", "div", "dot", "equal",
-            "pow", "per", "sqrt", "fac",
+            "pow", "per", "sqrt", "fac", "getLog"
     };
+    private Spinner LogSpinner;
     private int btnNUM = btnName.length;                        //按钮个数
     private Button[] buttons = new Button[btnNUM];              //动态按钮数组
     private HashMap btnId = new HashMap<String, Integer>();     //给按钮先编号，方便批量处理
-    private TextView textProcess;                               //计算过程
-    private TextView textResult;                                //结果textview
+    public static TextView textProcess;                               //计算过程
+    public static TextView textResult;                                //结果textview
     private int braClick = 0;                                   //用来记录括号的输入次数
-//    private Configuration myConf;                               //设置获取，用于判断屏幕方向
+    //    private Configuration myConf;                               //设置获取，用于判断屏幕方向
+    CalculateLogs myLogs;
+    private boolean checkSpinner = false;
+
+
+    //    private ExpandableListActivity
+    private void initSpinner() {
+//        myLogs = new CalculateLogs(this);
+        LogSpinner = (Spinner) findViewById(R.id.Logs);
+        ArrayList<String> temp = myLogs.getAllRecords();
+        ArrayAdapter<String> Lines = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, temp);
+        Lines.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        LogSpinner.setAdapter(Lines);
+        LogSpinner.setSelection(LogSpinner.getAdapter().getCount() - 1);
+        LogSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String Line = (String) LogSpinner.getItemAtPosition(position);
+                String[] temp = Line.split("=");
+                if (temp.length == 2 && checkSpinner) {
+                    textProcess.setText(temp[0]);
+                    textResult.setText(temp[1]);
+                } else {
+                    checkSpinner = true;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+    }
 
 
     // 初始化按钮
@@ -52,6 +94,12 @@ public class MainActivity extends Activity {
             btnId.put(i, btnName[i]);
         }
         //按钮个数确定或绑定id和事件
+//        this.initSpinner();
+
+        //初始化按钮完成后初始化Spinner
+//        showLog();
+
+
         btnListener myBtnListener = new btnListener();
         // 批量绑定按钮
         for (int i = 0; i < btnNUM; i++) {
@@ -60,6 +108,7 @@ public class MainActivity extends Activity {
             buttons[i] = ((Button) findViewById(btnID));
             buttons[i].setOnClickListener(myBtnListener);
         }
+
 
     }
 
@@ -78,6 +127,7 @@ public class MainActivity extends Activity {
 //        textResult.scrollTo(0,offset2);
     }
 
+
     //activity 创建
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +141,14 @@ public class MainActivity extends Activity {
         textProcess.setMovementMethod(new ScrollingMovementMethod());  //设置输入过程框为可滑动
         textResult = (TextView) findViewById(R.id.Result);
         textResult.setMovementMethod(new ScrollingMovementMethod());  //设置输入过程框为可滑动
+
+
+        //创建数据库
+        myLogs = new CalculateLogs(this);
+        initSpinner();
+        textProcess.setText("");
+        textResult.setText("");
+
 
     }
 
@@ -317,7 +375,7 @@ public class MainActivity extends Activity {
             case "equal":
                 //按下等号后存储计算记录
                 this.date_save();
-                textProcess.setText(textResult.getText());
+
                 break;
 
             //-----------------------------------高级计算功能
@@ -370,7 +428,17 @@ public class MainActivity extends Activity {
 
     //存储计算记录
     private void date_save() {
-
+        String process = textProcess.getText().toString();
+        String result = textResult.getText().toString();
+        //存储一条记录
+        if (process.length() >= 1 && result.length() >= 1) {
+            myLogs.insert(process, result);
+        }
+        initSpinner();
+        checkSpinner = false;
+        if (Pattern.matches("[\\-\\d\\.E]+", textResult.getText().toString())) {
+            textProcess.setText(textResult.getText());
+        }
     }
 
 }

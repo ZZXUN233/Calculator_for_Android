@@ -21,33 +21,11 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0">
 
-        <LinearLayout
+        <Spinner
+            android:id="@+id/Logs"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.8"
-            android:orientation="horizontal">
-
-            <ScrollView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical" />
-            </ScrollView>
-
-            <Button
-                android:id="@+id/button"
-                style="@style/numBtn"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="历史记录"
-                android:textSize="12sp" />
-
-        </LinearLayout>
+            android:layout_weight="0.8" />
 
         <TextView
             android:id="@+id/Process"
