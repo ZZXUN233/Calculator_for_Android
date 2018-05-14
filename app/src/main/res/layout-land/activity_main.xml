@@ -2,7 +2,6 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -23,6 +22,11 @@
             android:layout_height="0dp"
             android:layout_weight="1.5" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#e0e0e0" />
+
         <TextView
             android:id="@+id/Process"
             android:layout_width="match_parent"
@@ -31,7 +35,13 @@
             android:scrollbars="vertical"
             android:fadeScrollbars="false"
             android:textAlignment="viewEnd"
+            android:autoSizeTextType="uniform"
             android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#bdbdbd" />
 
         <TextView
             android:id="@+id/Result"
@@ -42,7 +52,13 @@
             android:fadeScrollbars="false"
             android:freezesText="false"
             android:textAlignment="viewEnd"
+            android:autoSizeTextType="uniform"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#9e9e9e" />
 
         <LinearLayout
             android:id="@+id/InputMain"
@@ -51,86 +67,6 @@
             android:layout_weight="6"
             android:baselineAligned="false"
             android:orientation="horizontal">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <Button
-                    android:id="@+id/pow"
-                    style="@style/numBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="^" />
-
-                <Button
-                    android:id="@+id/per"
-                    style="@style/numBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="%" />
-
-                <Button
-                    android:id="@+id/sqrt"
-                    style="@style/numBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="√" />
-
-                <Button
-                    android:id="@+id/fac"
-                    style="@style/numBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="!" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <Button
-                    android:id="@+id/AC"
-                    style="@style/numBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="AC" />
-
-                <Button
-                    android:id="@+id/add"
-                    style="@style/numBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="+" />
-
-                <Button
-                    android:id="@+id/mul"
-                    style="@style/numBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="×" />
-
-                <Button
-                    android:id="@+id/braL"
-                    style="@style/numBtn"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:text="(" />
-
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -256,6 +192,86 @@
                 android:orientation="vertical">
 
                 <Button
+                    android:id="@+id/pow"
+                    style="@style/numBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="^" />
+
+                <Button
+                    android:id="@+id/per"
+                    style="@style/numBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="%" />
+
+                <Button
+                    android:id="@+id/sqrt"
+                    style="@style/numBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="√" />
+
+                <Button
+                    android:id="@+id/fac"
+                    style="@style/numBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="!" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/AC"
+                    style="@style/numBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="AC" />
+
+                <Button
+                    android:id="@+id/add"
+                    style="@style/numBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="+" />
+
+                <Button
+                    android:id="@+id/mul"
+                    style="@style/numBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="×" />
+
+                <Button
+                    android:id="@+id/braL"
+                    style="@style/numBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="(" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <Button
                     android:id="@+id/del"
                     style="@style/numBtn"
                     android:layout_width="match_parent"
@@ -287,6 +303,7 @@
                     android:layout_weight="1"
                     android:text=")" />
             </LinearLayout>
+
         </LinearLayout>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

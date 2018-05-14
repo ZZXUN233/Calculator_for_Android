@@ -18,12 +18,11 @@ public class CalculateLogs extends SQLiteOpenHelper {
 
     //table
     private static final String _TABLE = "logs";
-    private static final String _ID = "id";
     private static final String _PROCESS = "process";
     private static final String _RESULT = "result";
 
 
-    private SQLiteDatabase myDB;
+//    private SQLiteDatabase myDB;
 
 
     public CalculateLogs(Context context) {
@@ -35,7 +34,7 @@ public class CalculateLogs extends SQLiteOpenHelper {
         Log.e("数据库", "onCreate方法已经调用！");
         int version = db.getVersion();
         db.execSQL("create TABLE " + _TABLE + "("
-                + _ID + " text primary key," + _PROCESS + " text,"
+                + _PROCESS + " text primary key,"
                 + _RESULT + " text)");
         db.setVersion(1);
         Log.e("数据库", "创建成功！");
@@ -55,9 +54,8 @@ public class CalculateLogs extends SQLiteOpenHelper {
         }
         Cursor cursor = db.query(_TABLE,
                 null, null, null, null, null, null);
-        int count = cursor.getCount();
+        int count = 0;
         ContentValues tableLine = new ContentValues();
-        tableLine.put(this._ID, String.valueOf(count++));
         tableLine.put(this._PROCESS, process);
         tableLine.put(this._RESULT, result);
         try {
@@ -70,25 +68,9 @@ public class CalculateLogs extends SQLiteOpenHelper {
         }
     }
 
-    //查询所有的记录用于生成list
-    public ArrayList<String> queryAll() {
-        ArrayList<String> lines = new ArrayList<String>();
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        Cursor cursor = db.query(_TABLE,
-                null, null, null, null, null, null);
-        if (cursor.getCount() <= 0) {
-            return lines;
-        } else {
-            for (int i = 0; i < cursor.getCount(); i++) {
-                lines.add(cursor.getString(i));
-            }
-            return lines;
-        }
-    }
 
     public ArrayList<String> getAllRecords() {
-        Log.e("数据库","获取所有记录！");
+        Log.e("数据库", "获取所有记录！");
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<String> lines = new ArrayList<String>();
         String temp1 = "";
@@ -96,11 +78,14 @@ public class CalculateLogs extends SQLiteOpenHelper {
         Cursor cursor = db.query(_TABLE,
                 null, null, null, null, null, null);
         if (cursor.getCount() <= 0) {
-            lines.add("没有记录！");
+            lines.add("等号插入，双击Del删除选中，长按AC清空！");
             cursor.close();
             return lines;
         } else {
             cursor.moveToFirst();
+            temp1 = cursor.getString(cursor.getColumnIndex(_PROCESS));
+            temp2 = cursor.getString(cursor.getColumnIndex(_RESULT));
+            lines.add(temp1 + "=" + temp2);
             while (cursor.moveToNext()) {
                 temp1 = cursor.getString(cursor.getColumnIndex(_PROCESS));
                 temp2 = cursor.getString(cursor.getColumnIndex(_RESULT));
@@ -113,11 +98,19 @@ public class CalculateLogs extends SQLiteOpenHelper {
     }
 
 
-    public void delOne() {
+    public void delOne(String process) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(_TABLE, "process = ?", new String[]{process});
+        Log.e("数据库", "删除一条记录！");
+        db.close();
 
     }
 
     public void clearAll() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(_TABLE,null,null);
+        Log.e("数据库", "删除全部数据！");
+        db.close();
 
     }
 }

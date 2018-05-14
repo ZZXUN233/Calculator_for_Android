@@ -2,6 +2,7 @@ package com.example.zzx.mycalculator;
 
 import android.app.Activity;
 import android.app.ExpandableListActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import java.util.ArrayList;
@@ -41,7 +43,12 @@ public class MainActivity extends Activity {
     private HashMap btnId = new HashMap<String, Integer>();     //给按钮先编号，方便批量处理
     public static TextView textProcess;                               //计算过程
     public static TextView textResult;                                //结果textview
+    private Context nowContext;
     private int braClick = 0;                                   //用来记录括号的输入次数
+    private String spinnerItem;
+    //双击判断
+    private long lastTouchTime = 0;
+    private long currentTouchTime = 0;
     //    private Configuration myConf;                               //设置获取，用于判断屏幕方向
     CalculateLogs myLogs;
     private boolean checkSpinner = false;
@@ -52,8 +59,8 @@ public class MainActivity extends Activity {
 //        myLogs = new CalculateLogs(this);
         LogSpinner = (Spinner) findViewById(R.id.Logs);
         ArrayList<String> temp = myLogs.getAllRecords();
-        ArrayAdapter<String> Lines = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, temp);
-        Lines.setDropDownViewResource(android.R.layout.simple_spinner_item);
+        ArrayAdapter<String> Lines = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, temp);
+        Lines.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         LogSpinner.setAdapter(Lines);
         LogSpinner.setSelection(LogSpinner.getAdapter().getCount() - 1);
         LogSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -62,6 +69,7 @@ public class MainActivity extends Activity {
                 String Line = (String) LogSpinner.getItemAtPosition(position);
                 String[] temp = Line.split("=");
                 if (temp.length == 2 && checkSpinner) {
+                    spinnerItem = temp[0];
                     textProcess.setText(temp[0]);
                     textResult.setText(temp[1]);
                 } else {
@@ -101,12 +109,14 @@ public class MainActivity extends Activity {
 
 
         btnListener myBtnListener = new btnListener();
+        longClick LongClick = new longClick();
         // 批量绑定按钮
         for (int i = 0; i < btnNUM; i++) {
             String btnName = btnId.get(i).toString();
             int btnID = getResources().getIdentifier(btnName, "id", getPackageName());
             buttons[i] = ((Button) findViewById(btnID));
             buttons[i].setOnClickListener(myBtnListener);
+            buttons[i].setOnLongClickListener(LongClick);
         }
 
 
@@ -119,6 +129,8 @@ public class MainActivity extends Activity {
             textProcess.scrollTo(0, offset - textProcess.getHeight());
 //        }else{
 //            textProcess.scrollTo(0,offset);
+        }else {
+            textProcess.scrollTo(0,-2);
         }
         int offset2 = textResult.getLineCount() * textResult.getLineHeight();
 //        if(offset2>textResult.getHeight()){
@@ -145,6 +157,7 @@ public class MainActivity extends Activity {
 
         //创建数据库
         myLogs = new CalculateLogs(this);
+        nowContext = this;
         initSpinner();
         textProcess.setText("");
         textResult.setText("");
@@ -239,6 +252,18 @@ public class MainActivity extends Activity {
                     opInput("AC");
                     break;
                 case R.id.del:
+                    lastTouchTime = currentTouchTime;
+                    currentTouchTime = System.currentTimeMillis();
+                    if (currentTouchTime - lastTouchTime < 250) {
+                        myLogs.delOne(spinnerItem);
+                        initSpinner();
+                        Log.e("Del", "双击事件！");
+                        String msg = "你已经清除当前记录！";
+                        Toast.makeText(nowContext, msg, Toast.LENGTH_SHORT).show();
+                        lastTouchTime = 0;
+                        currentTouchTime = 0;
+                        break;
+                    }
                     opInput("del");
                     break;
                 case R.id.braL:
@@ -281,6 +306,28 @@ public class MainActivity extends Activity {
                     break;
             }
 
+        }
+    }
+
+
+    //给AC，DEl两个按钮添加长按事件
+    private class longClick implements View.OnLongClickListener {
+
+        @Override
+        public boolean onLongClick(View v) {
+            switch (v.getId()) {
+                case R.id.del:
+                    break;
+                case R.id.AC:
+
+                    myLogs.clearAll();
+                    initSpinner();
+                    String msg = "你已经清空数据库！";
+                    textProcess.setText("");
+                    Toast.makeText(nowContext, msg, Toast.LENGTH_SHORT).show();
+                    break;
+            }
+            return false;
         }
     }
 

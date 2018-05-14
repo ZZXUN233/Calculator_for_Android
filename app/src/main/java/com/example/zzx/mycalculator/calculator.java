@@ -6,6 +6,8 @@ package com.example.zzx.mycalculator;
 import java.util.Stack;
 import java.util.regex.*;
 import java.util.HashMap;
+//加入精度控制
+import java.math.BigDecimal;
 
 public class calculator {
     // 两个全局堆栈
@@ -100,9 +102,6 @@ public class calculator {
             tempStack.push(numTemp);
             numTemp = "";
         }
-        for (String item : tempStack) {
-            System.out.println(item);
-        }
     }
 
     // 建立全局堆栈
@@ -112,7 +111,7 @@ public class calculator {
         // 这里响应多种输入的入栈
         // 数字
         if (Pattern.matches("[\\d\\.E]+", pushTem)) {
-            System.out.println("数字入栈！" + pushTem);
+//            System.out.println("数字入栈！" + pushTem);
             expStack.push(pushTem);
         } else if (Pattern.matches("[\\(]+", pushTem)) { // 左括号
             opStack.push(pushTem);
@@ -125,9 +124,9 @@ public class calculator {
             }
             opStack.pop();
         } else {
-            System.out.println(pushTem + "符号入栈！");
+//            System.out.println(pushTem + "符号入栈！");
             for (String op : opStack) {
-                System.out.println(op + "--------在符号缓存栈中");
+//                System.out.println(op + "--------在符号缓存栈中");
             }
             if (!opStack.isEmpty()) {
                 while (op_rules.get(pushTem) <= op_rules.get(opStack.peek())) { // 当前操作符的优先级小于或等于栈顶操作符号的优先级时
@@ -151,19 +150,19 @@ public class calculator {
     private static String calculate() {
         // 每计算一次先初始化后缀栈
         for (String tem : opStack) {
-            System.out.println(tem);
+//            System.out.println(tem);
         }
 
         while (!opStack.isEmpty()) {
             String tem = opStack.peek();
-            System.out.println(tem + "从op-->exp");
+//            System.out.println(tem + "从op-->exp");
             expStack.push(opStack.pop());
         }
 
-        System.out.println("-----------后缀表达式-----------");
-        for (String tem : expStack) {
-            System.out.println(tem);
-        }
+//        System.out.println("-----------后缀表达式-----------");
+//        for (String tem : expStack) {
+//            System.out.println(tem);
+//        }
         // 做运算
         for (String tem : expStack) {
             if (Pattern.matches("[\\d\\.E]+", tem)) { // 数字入栈
@@ -183,7 +182,10 @@ public class calculator {
             } else if (Pattern.matches("[\\-]+", tem)) {
                 Double numR = numStack.pop();
                 Double numL = numStack.pop();
-                numStack.push(numL - numR);
+                //精度控制
+                BigDecimal bR = new BigDecimal(String.valueOf(numR));
+                BigDecimal bL = new BigDecimal(String.valueOf(numL));
+                numStack.push(bL.subtract(bR).doubleValue());
             } else if (Pattern.matches("[\\/]+", tem)) {
                 Double numR = numStack.pop();
                 Double numL = numStack.pop();
@@ -212,10 +214,10 @@ public class calculator {
             }
         }
 
-        for (Double num : numStack) {
-            System.out.println(num + "在数字栈中");
-        }
-        System.out.println("最终数字栈大小为" + numStack.size());
+//        for (Double num : numStack) {
+//            System.out.println(num + "在数字栈中");
+//        }
+//        System.out.println("最终数字栈大小为" + numStack.size());
         if (numStack.size() == 1) {
             RESULT = Double.toString(numStack.peek());
             System.out.println(RESULT + "是计算结果！");
